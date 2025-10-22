@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greek Vocabulary Flashcards</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define the card flip animation */
+        /* Added perspective to the container for a 3D effect */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .card {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* For Safari */
+            position: absolute; /* Ensure they stack */
+            width: 100%;
+            height: 100%;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .is-flipped {
+            transform: rotateY(180deg);
+        }
+        /* Use Inter font which supports Greek characters well */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md">
+        
+        <!-- Header --><h1 class="text-3xl font-bold text-center text-indigo-700 mb-6">
+            Ελληνικό Λεξιλόγιο
+            <span class="block text-xl text-gray-600 font-normal">Greek Vocabulary Flashcards</span>
+        </h1>
+
+        <!-- Dropdown Selectors --><div class="flex flex-col sm:flex-row sm:space-x-4 mb-6">
+            <div class="flex-1 mb-4 sm:mb-0">
+                <label for="theme-select" class="block text-sm font-medium text-gray-700 mb-1">Theme</label>
+                <select id="theme-select" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                    <!-- Themes will be populated by JS --></select>
+            </div>
+            <div class="flex-1">
+                <label for="subtheme-select" class="block text-sm font-medium text-gray-700 mb-1">Sub-Theme</label>
+                <select id="subtheme-select" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white" disabled>
+                    <!-- Sub-themes will be populated by JS --></select>
+            </div>
+        </div>
+
+        <!-- Flashcard Container --><!-- Added perspective-1000 class here --><div class="perspective-1000 w-full h-64 mb-6"> 
+            <div id="flashcard" class="card relative w-full h-full cursor-pointer">
+                <!-- Card Front --><div id="card-front" class="card-front w-full h-full bg-white rounded-lg shadow-xl p-6 flex flex-col justify-between items-center border border-gray-200">
+                    <div class="self-start text-sm font-medium text-gray-500" id="card-front-label">Greek</div>
+                    <div class="text-3xl md:text-4xl font-bold text-indigo-700 text-center px-4" id="card-front-text">
+                        Choose a Theme and Sub-Theme to practice.
+                    </div>
+                    <div class="text-sm text-gray-400" id="progress-indicator">...</div>
+                </div>
+                <!-- Card Back --><div id="card-back" class="card-back w-full h-full bg-indigo-600 rounded-lg shadow-xl p-6 flex flex-col justify-between items-center">
+                    <div class="self-start text-sm font-medium text-indigo-100" id="card-back-label">English</div>
+                    <div class="text-3xl md:text-4xl font-bold text-indigo-100 text-center px-4" id="card-back-text">
+                        Choose a Theme and Sub-Theme to practice.
+                    </div>
+                    <div class="text-sm text-indigo-200">Click to flip back</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons --><div class="flex justify-between items-center mb-4">
+            <button id="prev-btn" class="bg-white text-gray-700 px-6 py-3 rounded-lg shadow-md hover:bg-gray-50 transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed border border-gray-300">
+                &larr; Previous
+            </button>
+            <button id="flip-btn" class="bg-indigo-500 text-white px-8 py-3 rounded-lg shadow-md hover:bg-indigo-600 transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed font-semibold">
+                Flip
+            </button>
+            <button id="next-btn" class="bg-white text-gray-700 px-6 py-3 rounded-lg shadow-md hover:bg-gray-50 transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed border border-gray-300">
+                Next &rarr;
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Reset Button --><button id="reset-btn" title="Reset to start" class="fixed bottom-4 left-4 bg-white text-gray-700 p-3 rounded-full shadow-lg border border-gray-300 hover:bg-orange-300 transition duration-200">
+        <!-- Simple SVG for reset icon --><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0015.357 2m0 0H15" />
+        </svg>
+    </button>
+
+
+    <script>
+        // --- DATA ---
+        // All flashcard data, organized by themes and sub-themes
+        const allFlashcards = {
+            'general': {
+                'general - γενικά': [
+                    { greek: 'ο σκύλος', english: 'dog' },
+                    { greek: 'η γάτα', english: 'cat' },
+                    { greek: 'το σπίτι', english: 'house' },
+                    { greek: 'το αυτοκίνητο', english: 'car' },
+                    { greek: 'το δέντρο', english: 'tree' }
+                ]
+            },
+            'inside the house - μέσα στο σπίτι': {
+                'living room - το σαλόνι': [
+                    { greek: 'ο καναπές', english: 'sofa' },
+                    { greek: 'η πολυθρόνα', english: 'armchair' },
+                    { greek: 'το τραπεζάκι', english: 'coffee table' },
+                    { greek: 'το ράφι', english: 'shelf' },
+                    { greek: 'το φωτιστικό', english: 'lamp' },
+                    { greek: 'ο πίνακας', english: 'picture on wall' },
+                    { greek: 'η κουρτίνα', english: 'curtain' },
+                    { greek: 'το χαλί', english: 'carpet' }
+                ],
+                'bedroom - το υπνοδωμάτιο': [
+                    { greek: 'το κρεβάτι', english: 'bed' },
+                    { greek: 'το κομοδίνο', english: 'bedside table' },
+                    { greek: 'η ντουλάπα', english: 'cupboard' },
+                    { greek: 'ο καθρέφτης', english: 'mirror' },
+                    { greek: 'τα σεντόνια', english: 'sheets' },
+                    { greek: 'το μαξιλάρι', english: 'pillow' }
+                ],
+                'bathroom - το μπάνιο': [
+                    { greek: 'η μπανιέρα', english: 'bathtub' },
+                    { greek: 'η τουαλέτα', english: 'toilet' },
+                    { greek: 'το καζανάκι', english: 'cistern' },
+                    { greek: 'η πετσέτα', english: 'towel' },
+                    { greek: 'το χαρτί τουαλέτας', english: 'toilet paper' },
+                    { greek: 'το καλάθι', english: 'basket' },
+                    { greek: 'η κουρτίνα μπάνιου', english: 'shower curtain' },
+                    { greek: 'το χαλάκι', english: 'mat' },
+                    { greek: 'ο νιπτήρας', english: 'sink (bathroom)' }
+                ],
+                'kitchen - η κουζίνα': [
+                    { greek: 'ο νεροχύτης', english: 'sink (kitchen)' },
+                    { greek: 'το ντουλάπι', english: 'cupboard' },
+                    { greek: 'το συρτάρι', english: 'drawer' },
+                    { greek: 'το ψυγείο', english: 'fridge' },
+                    { greek: 'ο φούρνος', english: 'oven' },
+                    { greek: 'ο φούρνος μικροκυμάτων', english: 'microwave' },
+                    { greek: 'η κατσαρόλα', english: 'pot' },
+                    { greek: 'ο βραστήρας', english: 'boiler' },
+                    { greek: 'ο αποχυμωτής', english: 'juice maker' },
+                    { greek: 'η τραπεζαρία', english: 'dining table' },
+                    { greek: 'η καρέκλα', english: 'chair' }
+                ]
+            }
+        };
+
+        // --- STATE ---
+        let currentFlashcards = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+        const SHUFFLE_ALL_KEY = "__SHUFFLE_ALL__";
+
+        // --- ELEMENTS ---
+        const themeSelect = document.getElementById('theme-select');
+        const subthemeSelect = document.getElementById('subtheme-select');
+        const flashcard = document.getElementById('flashcard');
+        const cardFront = document.getElementById('card-front');
+        const cardBack = document.getElementById('card-back');
+        const cardFrontLabel = document.getElementById('card-front-label');
+        const cardFrontText = document.getElementById('card-front-text');
+        const cardBackLabel = document.getElementById('card-back-label');
+        const cardBackText = document.getElementById('card-back-text');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const flipBtn = document.getElementById('flip-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // --- FUNCTIONS ---
+
+        /**
+         * Shuffles an array in place using the Fisher-Yates algorithm.
+         * @param {Array} array - The array to shuffle.
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        /**
+         * Loads the main themes into the theme dropdown.
+         */
+        function loadThemes() {
+            themeSelect.innerHTML = '<option value="" disabled selected>- Select Theme -</option>'; // Add default
+            for (const themeKey in allFlashcards) {
+                const option = document.createElement('option');
+                option.value = themeKey;
+                option.textContent = themeKey;
+                themeSelect.appendChild(option);
+            }
+        }
+
+        /**
+         * Loads sub-themes based on the selected main theme.
+         */
+        function loadSubthemes() {
+            const selectedTheme = themeSelect.value;
+            subthemeSelect.innerHTML = '<option value="" disabled selected>- Select Sub-Theme -</option>'; // Add default
+            subthemeSelect.disabled = true;
+            
+            if (selectedTheme && allFlashcards[selectedTheme]) {
+                const subthemes = allFlashcards[selectedTheme];
+                for (const subthemeKey in subthemes) {
+                    const option = document.createElement('option');
+                    option.value = subthemeKey;
+                    option.textContent = subthemeKey;
+                    subthemeSelect.appendChild(option);
+                }
+                
+                // Add "Shuffle All" option if there's more than one sub-theme
+                if (Object.keys(subthemes).length > 1) {
+                    const shuffleOption = document.createElement('option');
+                    shuffleOption.value = SHUFFLE_ALL_KEY;
+                    // Using text-indigo-600 for a bit of style in the dropdown
+                    shuffleOption.innerHTML = '🔀 Shuffle all - ανακατέψτε όλα 🔀';
+                    shuffleOption.className = "font-bold text-indigo-600";
+                    subthemeSelect.appendChild(shuffleOption);
+                }
+
+                subthemeSelect.disabled = false;
+            }
+            loadDeck(); // Load deck (which will be empty if no sub-theme)
+        }
+
+        /**
+         * Loads the flashcard deck based on selected theme and sub-theme.
+         */
+        function loadDeck() {
+            const themeKey = themeSelect.value;
+            const subthemeKey = subthemeSelect.value;
+            currentFlashcards = [];
+
+            if (themeKey && subthemeKey && allFlashcards[themeKey]) {
+                if (subthemeKey === SHUFFLE_ALL_KEY) {
+                    // Combine all cards from all sub-themes
+                    const allSubthemes = allFlashcards[themeKey];
+                    for (const key in allSubthemes) {
+                        currentFlashcards.push(...allSubthemes[key]);
+                    }
+                } else if (allFlashcards[themeKey][subthemeKey]) {
+                    // Get cards from the specific sub-theme
+                    currentFlashcards = [...allFlashcards[themeKey][subthemeKey]];
+                }
+                
+                if (currentFlashcards.length > 0) {
+                    shuffleArray(currentFlashcards);
+                }
+            }
+            
+            currentIndex = 0;
+            // Ensure card is facing front when loading a new deck
+            if (isFlipped) {
+                flashcard.classList.remove('is-flipped');
+                isFlipped = false;
+            }
+            updateCard();
+            updateNavButtons();
+        }
+
+        /**
+         * Updates the content displayed on the flashcard.
+         */
+        function updateCard() {
+            // Unflip the card if it's flipped (e.g., when moving next/prev)
+            if (isFlipped) {
+                flashcard.classList.remove('is-flipped');
+                isFlipped = false;
+            }
+
+            // Wait for flip animation to finish before updating text
+            setTimeout(() => {
+                if (currentFlashcards.length === 0) {
+                    // Show instructions
+                    cardFrontLabel.style.display = 'none'; // Hide "Greek Word" label
+                    cardFrontText.textContent = "Choose a Theme and Sub-Theme to practice.";
+                    cardFrontText.className = "text-xl font-bold text-indigo-700 text-center"; // Changed text color to indigo
+
+                    cardBackLabel.style.display = 'none'; // Hide "English Meaning" label
+                    cardBackText.textContent = "Choose a Theme and Sub-Theme to practice.";
+                    cardBackText.className = "text-xl font-bold text-indigo-100 text-center"; // Changed text color to indigo
+
+                    progressIndicator.textContent = "Waiting for selection...";
+                    return; // Stop here
+                }
+
+                // Restore normal labels and styles if we have cards
+                cardFrontLabel.style.display = 'block';
+                cardBackLabel.style.display = 'block';
+                cardFrontText.className = "text-3xl md:text-4xl font-bold text-indigo-700 text-center px-4"; // Changed Greek word color to indigo
+                cardBackText.className = "text-3xl md:text-4xl font-bold text-white text-center px-4";
+
+                const card = currentFlashcards[currentIndex];
+                cardFrontText.textContent = card.greek;
+                cardBackText.textContent = card.english;
+                progressIndicator.textContent = `${currentIndex + 1} / ${currentFlashcards.length}`;
+            }, isFlipped ? 300 : 0); // 300ms is half the transition time, ensures text updates after flip starts
+        }
+
+        /**
+         * Updates the enabled/disabled state of nav buttons.
+         */
+        function updateNavButtons() {
+            const hasCards = currentFlashcards.length > 0;
+            flipBtn.disabled = !hasCards;
+            prevBtn.disabled = !hasCards || currentIndex === 0;
+            nextBtn.disabled = !hasCards || currentIndex === currentFlashcards.length - 1;
+        }
+
+        /**
+         * Flips the flashcard.
+         */
+        function flipCard() {
+            if (currentFlashcards.length === 0) return;
+            isFlipped = !isFlipped;
+            flashcard.classList.toggle('is-flipped');
+        }
+
+        /**
+         * Shows the next card in the deck.
+         */
+        function nextCard() {
+            if (currentIndex < currentFlashcards.length - 1) {
+                currentIndex++;
+                updateCard();
+                updateNavButtons();
+            }
+        }
+
+        /**
+         * Shows the previous card in the deck.
+         */
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+                updateNavButtons();
+            }
+        }
+
+        /**
+         * Resets the application to its initial state without reloading.
+         */
+        function resetApp() {
+             // Reset dropdowns
+            themeSelect.selectedIndex = 0;
+            loadSubthemes(); // This will reset subthemes and call loadDeck()
+            
+            // loadDeck() inside loadSubthemes() already handles
+            // resetting the card state and buttons.
+        }
+
+        // --- EVENT LISTENERS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadThemes();
+            loadSubthemes(); // Will load empty/default state
+            updateNavButtons(); // Disable buttons initially
+        });
+
+        themeSelect.addEventListener('change', loadSubthemes);
+        subthemeSelect.addEventListener('change', loadDeck);
+        flipBtn.addEventListener('click', flipCard);
+        
+        // Add click listeners to the card itself to flip
+        // This is more intuitive than just the flip button
+        flashcard.addEventListener('click', flipCard); 
+        
+        prevBtn.addEventListener('click', prevCard);
+        nextBtn.addEventListener('click', nextCard);
+        resetBtn.addEventListener('click', resetApp);
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (currentFlashcards.length === 0) return; // Don't do anything if no cards
+
+            switch (e.key) {
+                case 'ArrowLeft':
+                    // Trigger click on prev button if it's not disabled
+                    if (!prevBtn.disabled) {
+                        prevBtn.click();
+                    }
+                    break;
+                case 'ArrowRight':
+                     // Trigger click on next button if it's not disabled
+                    if (!nextBtn.disabled) {
+                        nextBtn.click();
+                    }
+                    break;
+                case ' ': // Space bar
+                case 'ArrowUp':
+                case 'ArrowDown':
+                    e.preventDefault(); // Stop space from scrolling
+                     // Trigger click on flip button if it's not disabled
+                    if (!flipBtn.disabled) {
+                        flipBtn.click();
+                    }
+                    break;
+            }
+        });
+
+    </script>
+</body>
+</html>
+
+
+
