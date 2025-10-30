@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greek Vocabulary Flashcards</title>
-    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Define the card flip animation */
         /* Added perspective to the container for a 3D effect */
@@ -32,42 +34,97 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        /* --- Toggle Switch CSS --- */
+        .toggle-switch-container {
+            position: fixed;
+            top: 1rem; /* 16px */
+            left: 1rem; /* 16px */
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 0.25rem; /* 4px */
+            border-radius: 9999px; /* full */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb; /* gray-200 */
+            cursor: pointer;
+        }
+        .toggle-label {
+            font-size: 0.75rem; /* 12px */
+            font-weight: 500;
+            padding: 0.25rem 0.5rem; /* 4px 8px */
+            border-radius: 9999px; /* full */
+            transition: all 0.2s ease-in-out;
+        }
+        .toggle-label-left {
+            color: #4f46e5; /* indigo-600 */
+            background-color: #e0e7ff; /* indigo-100 */
+        }
+        .toggle-label-right {
+            color: #6b7280; /* gray-500 */
+            background-color: transparent;
+        }
+        /* Styles when toggled */
+        .toggle-switch-container.toggled .toggle-label-left {
+            color: #6b7280; /* gray-500 */
+            background-color: transparent;
+        }
+        .toggle-switch-container.toggled .toggle-label-right {
+            color: #4f46e5; /* indigo-600 */
+            background-color: #e0e7ff; /* indigo-100 */
+        }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4 pt-20">
+
+    <!-- Direction Toggle Switch -->
+    <div id="direction-toggle" class="toggle-switch-container" title="Click to change direction">
+        <span id="toggle-label-gr" class="toggle-label toggle-label-left">Greek → English</span>
+        <span id="toggle-label-en" class="toggle-label toggle-label-right">English → Greek</span>
+    </div>
 
     <div class="w-full max-w-md">
         
-        <!-- Header --><h1 class="text-3xl font-bold text-center text-indigo-700 mb-6">
+        <!-- Header -->
+        <h1 class="text-3xl font-bold text-center text-indigo-700 mb-6">
             Ελληνικό Λεξιλόγιο
             <span class="block text-xl text-gray-600 font-normal">Greek Vocabulary Flashcards</span>
         </h1>
 
-        <!-- Dropdown Selectors --><div class="flex flex-col sm:flex-row sm:space-x-4 mb-6">
+        <!-- Dropdown Selectors -->
+        <div class="flex flex-col sm:flex-row sm:space-x-4 mb-6">
             <div class="flex-1 mb-4 sm:mb-0">
                 <label for="theme-select" class="block text-sm font-medium text-gray-700 mb-1">Theme</label>
                 <select id="theme-select" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                    <!-- Themes will be populated by JS --></select>
+                    <!-- Themes will be populated by JS -->
+                </select>
             </div>
             <div class="flex-1">
                 <label for="subtheme-select" class="block text-sm font-medium text-gray-700 mb-1">Sub-Theme</label>
                 <select id="subtheme-select" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white" disabled>
-                    <!-- Sub-themes will be populated by JS --></select>
+                    <!-- Sub-themes will be populated by JS -->
+                </select>
             </div>
         </div>
 
-        <!-- Flashcard Container --><!-- Added perspective-1000 class here --><div class="perspective-1000 w-full h-64 mb-6"> 
+        <!-- Flashcard Container -->
+        <div class="perspective-1000 w-full h-64 mb-6"> 
             <div id="flashcard" class="card relative w-full h-full cursor-pointer">
-                <!-- Card Front --><div id="card-front" class="card-front w-full h-full bg-white rounded-lg shadow-xl p-6 flex flex-col justify-between items-center border border-gray-200">
+                
+                <!-- Card Front -->
+                <div id="card-front" class="card-front w-full h-full bg-white rounded-lg shadow-xl p-6 flex flex-col justify-between items-center border border-gray-200">
                     <div class="self-start text-sm font-medium text-gray-500" id="card-front-label">Greek</div>
-                    <div class="text-3xl md:text-4xl font-bold text-indigo-700 text-center px-4" id="card-front-text">
+                    <div class="text-3xl md:text-4xl font-bold text-indigo-600 text-center px-4" id="card-front-text">
                         Choose a Theme and Sub-Theme to practice.
                     </div>
                     <div class="text-sm text-gray-400" id="progress-indicator">...</div>
                 </div>
-                <!-- Card Back --><div id="card-back" class="card-back w-full h-full bg-indigo-600 rounded-lg shadow-xl p-6 flex flex-col justify-between items-center">
+                
+                <!-- Card Back -->
+                <div id="card-back" class="card-back w-full h-full bg-indigo-600 rounded-lg shadow-xl p-6 flex flex-col justify-between items-center">
                     <div class="self-start text-sm font-medium text-indigo-100" id="card-back-label">English</div>
-                    <div class="text-3xl md:text-4xl font-bold text-indigo-100 text-center px-4" id="card-back-text">
+                    <div class="text-3xl md:text-4xl font-bold text-white text-center px-4" id="card-back-text">
                         Choose a Theme and Sub-Theme to practice.
                     </div>
                     <div class="text-sm text-indigo-200">Click to flip back</div>
@@ -75,7 +132,8 @@
             </div>
         </div>
 
-        <!-- Navigation Buttons --><div class="flex justify-between items-center mb-4">
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between items-center mb-4">
             <button id="prev-btn" class="bg-white text-gray-700 px-6 py-3 rounded-lg shadow-md hover:bg-gray-50 transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed border border-gray-300">
                 &larr; Previous
             </button>
@@ -89,18 +147,332 @@
 
     </div>
 
-    <!-- Reset Button --><button id="reset-btn" title="Reset to start" class="fixed bottom-4 left-4 bg-white text-gray-700 p-3 rounded-full shadow-lg border border-gray-300 hover:bg-orange-300 transition duration-200">
-        <!-- Simple SVG for reset icon --><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <!-- Reset Button -->
+    <button id="reset-btn" title="Reset to start" class="fixed bottom-4 left-4 bg-white text-gray-700 p-3 rounded-full shadow-lg border border-gray-300 hover:bg-orange-300 transition duration-200">
+        <!-- Refresh Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0015.357 2m0 0H15" />
         </svg>
     </button>
 
+    <!-- Help Button (Desktop Only) -->
+    <button id="help-btn" title="Show controls" class="fixed bottom-4 right-4 bg-white text-gray-700 rounded-full shadow-lg border border-gray-300 hover:bg-blue-100 transition duration-200 z-10 h-12 w-12 hidden items-center justify-center md:flex">
+        <!-- Question Mark Icon (Minimal) -->
+        <span class="text-xl font-bold text-gray-600">?</span>
+    </button>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto">
+            <h2 class="text-xl font-bold text-indigo-700 mb-4">Keyboard Controls</h2>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li><span class="font-semibold text-indigo-600">&larr; (Left Arrow):</span> Go to previous card</li>
+                <li><span class="font-semibold text-indigo-600">&rarr; (Right Arrow):</span> Go to next card</li>
+                <li><span class="font-semibold text-indigo-600">Spacebar / &uarr; / &darr;:</span> Flip the card</li>
+            </ul>
+            <button id="close-modal-btn" class="mt-6 w-full bg-indigo-500 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                Got it!
+            </button>
+        </div>
+    </div>
+
 
     <script>
         // --- DATA ---
+        
+        // --- Greek Number Generation Helpers ---
+        const GREEK_NUMBERS = {
+            units: [
+                "", "ένα", "δύο", "τρία", "τέσσερα", "πέντε", "έξι", "επτά", "οκτώ", "εννέα"
+            ],
+            teens: [
+                "δέκα", "έντεκα", "δώδεκα", "δεκατρία", "δεκατέσσερα", "δεκαπέντε", "δεκαέξι", "δεκαεπτά", "δεκαοκτώ", "δεκαεννέα"
+            ],
+            tens: [
+                "", "δέκα", "είκοσι", "τριάντα", "σαράντα", "πενήντα", "εξήντα", "εβδομήντα", "ογδόντα", "ενενήντα"
+            ],
+            hundreds: [
+                "", "εκατόν", // Special case for 100-199
+                "διακόσια", "τριακόσια", "τετρακόσια", "πεντακόσια", "εξακόσια", "επτακόσια", "οκτακόσια", "εννιακόσια"
+            ]
+        };
+
+        /**
+         * Converts a number (1-1000) into its Greek word representation.
+         * @param {number} num - The number to convert.
+         * @returns {string} The number in Greek.
+         */
+        function convertNumberToGreek(num) {
+            if (num === 0) return "μηδέν";
+            if (num === 1000) return "χίλια";
+
+            let parts = [];
+            
+            const h = Math.floor(num / 100);
+            const t = Math.floor((num % 100) / 10);
+            const u = num % 10;
+
+            // Handle Hundreds
+            if (h > 0) {
+                if (h === 1) {
+                    // 'εκατόν' if followed by something, 'εκατό' if exactly 100
+                    parts.push(num === 100 ? "εκατό" : "εκατόν");
+                } else {
+                    parts.push(GREEK_NUMBERS.hundreds[h]);
+                }
+            }
+
+            // Handle Tens and Units
+            const tensAndUnits = num % 100;
+            if (tensAndUnits > 0) {
+                if (tensAndUnits >= 10 && tensAndUnits <= 19) {
+                    parts.push(GREEK_NUMBERS.teens[tensAndUnits - 10]);
+                } else {
+                    if (t > 0) {
+                        parts.push(GREEK_NUMBERS.tens[t]);
+                    }
+                    if (u > 0) {
+                        parts.push(GREEK_NUMBERS.units[u]);
+                    }
+                }
+            }
+            
+            return parts.join(" ");
+        }
+
+        /**
+         * Generates a specified number of unique random flashcards in a given range.
+         * @param {number} min - The minimum number.
+         * @param {number} max - The maximum number.
+         * @param {number} count - The number of cards to generate.
+         * @returns {Array} An array of flashcard objects.
+         */
+        function generateRandomNumberCards(min, max, count) {
+            const cards = [];
+            const usedNumbers = new Set();
+            
+            while (cards.length < count) {
+                const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+                
+                if (!usedNumbers.has(randomNum)) {
+                    usedNumbers.add(randomNum);
+                    cards.push({
+                        english: String(randomNum),
+                        greek: convertNumberToGreek(randomNum)
+                    });
+                }
+            }
+            return cards;
+        }
+
+        /**
+         * Gets a random subset of cards from a given array.
+         * @param {Array} array - The source array.
+         * @param {number} count - The number of random cards to return.
+         * @returns {Array} A new array with 'count' random cards.
+         */
+        function getRandomCards(array, count) {
+            const shuffled = [...array]; // Create a copy
+            shuffleArray(shuffled);      // Shuffle the copy
+            return shuffled.slice(0, count); // Return the first 'count' items
+        }
+        // --- End of Number Helpers ---
+
+
+        // --- NEW: Static data for Nationalities ---
+        // We move this data here so we can reference it for random generation
+        const NATIONALITY_DATA = {
+            'Country - Χώρα': [
+                { english: 'Greece', greek: 'η Ελλάδα' },
+                { english: 'England', greek: 'η Αγγλία' },
+                { english: 'America', greek: 'η Αμερική' },
+                { english: 'France', greek: 'η Γαλλία' },
+                { english: 'Germany', greek: 'η Γερμανία' },
+                { english: 'Belgium', greek: 'το Βέλγιο' },
+                { english: 'Spain', greek: 'η Ισπανία' },
+                { english: 'Italy', greek: 'η Ιταλία' },
+                { english: 'Russia', greek: 'η Ρωσία' },
+                { english: 'Australia', greek: 'η Αυστραλία' },
+                { english: 'Japan', greek: 'η Ιαπωνία' },
+                { english: 'China', greek: 'η Κίνα' },
+                { english: 'Hungary', greek: 'η Ουγγαρία' },
+                { english: 'Poland', greek: 'η Πολωνία' },
+                { english: 'Ukraine', greek: 'η Ουκρανία' },
+                { english: 'Canada', greek: 'ο Καναδάς' },
+                { english: 'Congo', greek: 'το Κονγκό' },
+                { english: 'Cameroon', greek: 'το Καμερούν' },
+                { english: 'Lebanon', greek: 'ο Λίβανος' },
+                { english: 'Philippines', greek: 'οι Φιλιππίνες' },
+                { english: 'Bulgaria', greek: 'η Βουλγαρία' },
+                { english: 'Romania', greek: 'η Ρουμανία' },
+                { english: 'Czech Republic', greek: 'η Τσεχία' },
+                { english: 'Syria', greek: 'η Συρία' },
+                { english: 'Armenia', greek: 'η Αρμενία' },
+                { english: 'Brazil', greek: 'η Βραζιλία' },
+                { english: 'Mexico', greek: 'το Μεξικό' },
+                { english: 'Turkey', greek: 'η Τουρκία' },
+                { english: 'Egypt', greek: 'η Αίγυπτος' },
+                { english: 'Cyprus', greek: 'η Κύπρος' },
+                { english: 'Albania', greek: 'η Αλβανία' },
+                { english: 'Jordan', greek: 'η Ιορδανία' },
+                { english: 'Iraq', greek: 'το Ιράκ' },
+                { english: 'Iran', greek: 'το Ιράν' },
+                { english: 'Pakistan', greek: 'το Πακιστάν' },
+                { english: 'Afghanistan', greek: 'το Αφγανιστάν' },
+                { english: 'Georgia', greek: 'η Γεωργία' },
+                { english: 'India', greek: 'η Ινδία' },
+                { english: 'Chile', greek: 'η Χιλή' },
+                { english: 'Morocco', greek: 'η Μαρόκος' },
+                { english: 'Sudan', greek: 'το Σουδάν' },
+                { english: 'Somalia', greek: 'η Σομαλία' },
+                { english: 'Nigeria', greek: 'η Νιγηρία' },
+                { english: 'Korea', greek: 'η Κορέα' }
+            ],
+            'Nationality (Male) - Εθνικότητα (αρσενικό)': [
+                { english: 'Greek (m)', greek: 'ο Έλληνας' },
+                { english: 'English (m)', greek: 'ο Άγγλος' },
+                { english: 'American (m)', greek: 'ο Αμερικανός' },
+                { english: 'French (m)', greek: 'ο Γάλλος' },
+                { english: 'German (m)', greek: 'ο Γερμανός' },
+                { english: 'Belgian (m)', greek: 'ο Βέλγος' },
+                { english: 'Spanish (m)', greek: 'ο Ισπανός' },
+                { english: 'Italian (m)', greek: 'ο Ιταλός' },
+                { english: 'Russian (m)', greek: 'ο Ρώσος' },
+                { english: 'Australian (m)', greek: 'ο Αυστραλός' },
+                { english: 'Japanese (m)', greek: 'ο Ιάπωνας' },
+                { english: 'Chinese (m)', greek: 'ο Κινέζος' },
+                { english: 'Hungarian (m)', greek: 'ο Ούγγρος' },
+                { english: 'Polish (m)', greek: 'ο Πολωνός' },
+                { english: 'Ukrainian (m)', greek: 'ο Ουκρανός' },
+                { english: 'Canadian (m)', greek: 'ο Καναδός' },
+                { english: 'Congolese (m)', greek: 'ο Κονγκολέζος' },
+                { english: 'Cameroonian (m)', greek: 'ο Καμερουνέζος' },
+                { english: 'Lebanese (m)', greek: 'ο Λιβανέζος' },
+                { english: 'Filipino (m)', greek: 'ο Φιλιππινέζος' },
+                { english: 'Bulgarian (m)', greek: 'ο Βούλγαρος' },
+                { english: 'Romanian (m)', greek: 'ο Ρουμάνος' },
+                { english: 'Czech (m)', greek: 'ο Τσέχος' },
+                { english: 'Syrian (m)', greek: 'ο Σύριος' },
+                { english: 'Armenian (m)', greek: 'ο Αρμένιος' },
+                { english: 'Brazilian (m)', greek: 'ο Βραζιλιάνος' },
+                { english: 'Mexican (m)', greek: 'ο Μεξικανός' },
+                { english: 'Turkish (m)', greek: 'ο Τούρκος' },
+                { english: 'Egyptian (m)', greek: 'ο Αιγύπτιος' },
+                { english: 'Cypriot (m)', greek: 'ο Κύπριος' },
+                { english: 'Albanian (m)', greek: 'ο Αλβανός' },
+                { english: 'Jordanian (m)', greek: 'ο Ιορδανός' },
+                { english: 'Iraqi (m)', greek: 'ο Ιρακινός' },
+                { english: 'Iranian (m)', greek: 'ο Ιρανός' },
+                { english: 'Pakistani (m)', greek: 'ο Πακιστανός' },
+                { english: 'Afghan (m)', greek: 'ο Αφγανός' },
+                { english: 'Georgian (m)', greek: 'ο Γεωργιανός' },
+                { english: 'Indian (m)', greek: 'ο Ινδός' },
+                { english: 'Chilean (m)', greek: 'ο Χιλιανός' },
+                { english: 'Moroccan (m)', greek: 'ο Μαροκινός' },
+                { english: 'Sudanese (m)', greek: 'ο Σουδανός' },
+                { english: 'Somali (m)', greek: 'ο Σομαλός' },
+                { english: 'Nigerian (m)', greek: 'ο Νιγηριανός' },
+                { english: 'Korean (m)', greek: 'ο Κορεάτης' }
+            ],
+            'Nationality (Female) - Εθνικότητα (θηλυκό)': [
+                { english: 'Greek (f)', greek: 'η Ελληνίδα' },
+                { english: 'English (f)', greek: 'η Αγγλίδα' },
+                { english: 'American (f)', greek: 'η Αμερικανίδα' },
+                { english: 'French (f)', greek: 'η Γαλλίδα' },
+                { english: 'German (f)', greek: 'η Γερμανίδα' },
+                { english: 'Belgian (f)', greek: 'η Βελγίδα' },
+                { english: 'Spanish (f)', greek: 'η Ισπανίδα' },
+                { english: 'Italian (f)', greek: 'η Ιταλίδα' },
+                { english: 'Russian (f)', greek: 'η Ρωσίδα' },
+                { english: 'Australian (f)', greek: 'η Αυστραλέζα' },
+                { english: 'Japanese (f)', greek: 'η Ιαπωνέζα' },
+                { english: 'Chinese (f)', greek: 'η Κινέζα' },
+                { english: 'Hungarian (f)', greek: 'η Ουγγαρέζα' },
+                { english: 'Polish (f)', greek: 'η Πολωνέζα' },
+                { english: 'Ukrainian (f)', greek: 'η Ουκρανή' },
+                { english: 'Canadian (f)', greek: 'η Καναδέζα' },
+                { english: 'Congolese (f)', greek: 'η Κονγκολέζα' },
+                { english: 'Cameroonian (f)', greek: 'η Καμερουνέζα' },
+                { english: 'Lebanese (f)', greek: 'η Λιβανέζα' },
+                { english: 'Filipina (f)', greek: 'η Φιλιππινέζα' },
+                { english: 'Bulgarian (f)', greek: 'η Βουλγάρα' },
+                { english: 'Romanian (f)', greek: 'η Ρουμάνα' },
+                { english: 'Czech (f)', greek: 'η Τσέχα' },
+                { english: 'Syrian (f)', greek: 'η Σύρια' },
+                { english: 'Armenian (f)', greek: 'η Αρμένια' },
+                { english: 'Brazilian (f)', greek: 'η Βραζιλιάνα' },
+                { english: 'Mexican (f)', greek: 'η Μεξικανή' },
+                { english: 'Turkish (f)', greek: 'η Τούρκα' },
+                { english: 'Egyptian (f)', greek: 'η Αιγύπτια' },
+                { english: 'Cypriot (f)', greek: 'η Κύπρια' },
+                { english: 'Albanian (f)', greek: 'η Αλβανή' },
+                { english: 'Jordanian (f)', greek: 'η Ιορδανή' },
+                { english: 'Iraqi (f)', greek: 'η Ιρακινή' },
+                { english: 'Iranian (f)', greek: 'η Ιρανή' },
+                { english: 'Pakistani (f)', greek: 'η Πακιστανή' },
+                { english: 'Afghan (f)', greek: 'η Αφγανή' },
+                { english: 'Georgian (f)', greek: 'η Γεωργιανή' },
+                { english: 'Indian (f)', greek: 'η Ινδή' },
+                { english: 'Chilean (f)', greek: 'η Χιλιανή' },
+                { english: 'Moroccan (f)', greek: 'η Μαροκινή' },
+                { english: 'Sudanese (f)', greek: 'η Σουδανή' },
+                { english: 'Somali (f)', greek: 'η Σομαλή' },
+                { english: 'Nigerian (f)', greek: 'η Νιγηριανή' },
+                { english: 'Korean (f)', greek: 'η Κορεάτισσα' }
+            ],
+            'Language - Γλώσσα': [
+                { english: 'Greek', greek: 'ελληνικά' },
+                { english: 'English', greek: 'αγγλικά' },
+                { english: 'English', greek: 'αγγλικά' },
+                { english: 'French', greek: 'γαλλικά' },
+                { english: 'German', greek: 'γερμανικά' },
+                { english: 'Dutch / German / French', greek: 'ολλανδικά / γερμανικά / γαλλικά' },
+                { english: 'Spanish', greek: 'ισπανικά' },
+                { english: 'Italian', greek: 'ιταλικά' },
+                { english: 'Russian', greek: 'ρωσικά' },
+                { english: 'English', greek: 'αγγλικά' },
+                { english: 'Japanese', greek: 'ιαπωνικά' },
+                { english: 'Chinese', greek: 'κινεζικά' },
+                { english: 'Hungarian', greek: 'ουγγρικά' },
+                { english: 'Polish', greek: 'πολωνικά' },
+                { english: 'Ukrainian', greek: 'ουκρανικά' },
+                { english: 'English / French', greek: 'αγγλικά / γαλλικά' },
+                { english: 'Lingala', greek: 'λινγκάλα' },
+                { english: 'French / English', greek: 'γαλλικά / αγγλικά' },
+                { english: 'Arabic', greek: 'αραβικά' },
+                { english: 'Filipino', greek: 'φιλιππινέζικα' },
+                { english: 'Bulgarian', greek: 'βουλγαρικά' },
+                { english: 'Romanian', greek: 'ρουμανικά' },
+                { english: 'Czech', greek: 'τσέχικα' },
+                { english: 'Arabic', greek: 'αραβικά' },
+                { english: 'Armenian', greek: 'αρμένικα' },
+                { english: 'Portuguese', greek: 'πορτογαλικά' },
+                { english: 'Spanish', greek: 'ισπανικά' },
+                { english: 'Turkish', greek: 'τουρκικά' },
+                { english: 'Arabic', greek: 'αραβικά' },
+                { english: 'Greek', greek: 'ελληνικά' },
+                { english: 'Albanian', greek: 'αλβανικά' },
+                { english: 'Arabic', greek: 'αραβικά' },
+                { english: 'Arabic', greek: 'αραβικά' },
+                { english: 'Arabic / Kurdish', greek: 'αραβικά / κουρδικά' },
+                { english: 'Urdu', greek: 'ούρντου' },
+                { english: 'Dari / Pashto', greek: 'νταρί / παστού' },
+                { english: 'Georgian', greek: 'γεωργιανά' },
+                { english: 'Hindi', greek: 'χίντι' },
+                { english: 'Spanish', greek: 'ισπανικά' },
+                { english: 'Arabic', greek: 'αραβικά' },
+                { english: 'Arabic', greek: 'αραβικά' },
+                { english: 'Somali', greek: 'σομαλικά' },
+                { english: 'Nigerian', greek: 'νιγηριανά' },
+                { english: 'Korean', greek: 'κορεάτικα' }
+            ]
+        };
+
+
         // All flashcard data, organized by themes and sub-themes
+        // The 'allFlashcards' object now acts as a "data definition" map.
         const allFlashcards = {
-            'general': {
+            'General - Γενικός': { // Capitalized
                 'general - γενικά': [
                     { greek: 'ο σκύλος', english: 'dog' },
                     { greek: 'η γάτα', english: 'cat' },
@@ -109,7 +481,66 @@
                     { greek: 'το δέντρο', english: 'tree' }
                 ]
             },
-            'inside the house - μέσα στο σπίτι': {
+            'Numbers - Οι Αριθμοί': { // Capitalized
+                '0-10': [
+                    { english: '0', greek: 'μηδέν' },
+                    { english: '1', greek: 'ένα' },
+                    { english: '2', greek: 'δύο' },
+                    { english: '3', greek: 'τρία' },
+                    { english: '4', greek: 'τέσσερα' },
+                    { english: '5', greek: 'πέντε' },
+                    { english: '6', greek: 'έξι' },
+                    { english: '7', greek: 'επτά' },
+                    { english: '8', greek: 'οκτώ' },
+                    { english: '9', greek: 'εννέα' },
+                    { english: '10', greek: 'δέκα' }
+                ],
+                '11-100 (Random 20)': "GENERATE_RANDOM_11_100",
+                '101-1000 (Random 20)': "GENERATE_RANDOM_101_1000"
+            },
+            'Nationality - Εθνικότητες': { // Capitalized
+                // --- UPDATED: Use magic strings to trigger random 20 generation ---
+                'Country - Χώρα': "GET_NATIONALITY_COUNTRY",
+                'Nationality (Male) - Εθνικότητα (αρσενικό)': "GET_NATIONALITY_MALE",
+                'Nationality (Female) - Εθνικότητα (θηλυκό)': "GET_NATIONALITY_FEMALE",
+                'Language - Γλώσσα': "GET_NATIONALITY_LANGUAGE"
+            },
+            'The House - Το Σπίτι': { // Capitalized
+                'the apartment block - η πολυκατοικία': [
+                    { greek: 'το διαμέρισμα', english: 'apartment' },
+                    { greek: 'η γκαρσονιέρα', english: 'studio apartment' },
+                    { greek: 'το δυάρι', english: 'two-room apartment' },
+                    { greek: 'το τριάρι', english: 'three-room apartment' },
+                    { greek: 'η κρεβατοκάμαρα', english: 'the bedroom' },
+                    { greek: 'το υπνοδωμάτιο', english: 'the bedroom' },
+                    { greek: 'το σαλόνι', english: 'living room' },
+                    { greek: 'η τραπεζαρία', english: 'dining room' },
+                    { greek: 'η τουαλέτα', english: 'toilet' },
+                    { greek: 'ο διάδρομος', english: 'corridor' },
+                    { greek: 'το μπαλκόνι', english: 'balcony' },
+                    { greek: 'τα παράθυρα', english: 'windows' },
+                    { greek: 'ο ανελκυστήρας', english: 'lift' },
+                    { greek: 'το κουδούνι', english: 'doorbell' },
+                    { greek: 'η θέση στάθμευσης', english: 'parking spot' },
+                    { greek: 'η κεντρική θέρμανση', english: 'central heating system' },
+                    { greek: 'η αυτόνομη θέρμανση', english: 'autonomous heating system' },
+                    { greek: 'τα έπιπλα', english: 'furniture' },
+                    { greek: 'οι ηλεκτρικές συσκευές', english: 'electrical appliances' },
+                    { greek: 'διαμέρισμα καινούργιο', english: 'new apartment' },
+                    { greek: 'διαμέρισμα ανακαινισμένο', english: 'renovated apartment' },
+                    { greek: 'διαμέρισμα φρεσκοβαμμένο', english: 'fresh painted apartment' },
+                    { greek: 'διαμέρισμα επιπλωμένο', english: 'furnished apartment' },
+                    { greek: 'το ενοίκιο', english: 'rental' },
+                    { greek: 'τα κοινόχρηστα', english: 'common expenses' }
+                ],
+                'stand-alone house - μόνοκατοικία': [
+                    // Add words here
+                ],
+                'house related - σχετικό με το σπίτι': [
+                    // Add words here
+                ]
+            },
+            'Inside The House - Μέσα Στο Σπίτι': { // Capitalized
                 'living room - το σαλόνι': [
                     { greek: 'ο καναπές', english: 'sofa' },
                     { greek: 'η πολυθρόνα', english: 'armchair' },
@@ -159,6 +590,7 @@
         let currentFlashcards = [];
         let currentIndex = 0;
         let isFlipped = false;
+        let isGreekToEnglish = true; // true = Grk -> Eng, false = Eng -> Grk
         const SHUFFLE_ALL_KEY = "__SHUFFLE_ALL__";
 
         // --- ELEMENTS ---
@@ -176,6 +608,10 @@
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const resetBtn = document.getElementById('reset-btn');
+        const directionToggle = document.getElementById('direction-toggle');
+        const helpBtn = document.getElementById('help-btn');
+        const helpModal = document.getElementById('help-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
 
         // --- FUNCTIONS ---
 
@@ -215,7 +651,9 @@
                 const subthemes = allFlashcards[selectedTheme];
                 for (const subthemeKey in subthemes) {
                     const option = document.createElement('option');
-                    option.value = subthemeKey;
+                    // The 'value' is the key (e.g., 'living room...'), 
+                    // 'textContent' is also the key (which is what is displayed)
+                    option.value = subthemeKey; 
                     option.textContent = subthemeKey;
                     subthemeSelect.appendChild(option);
                 }
@@ -224,7 +662,6 @@
                 if (Object.keys(subthemes).length > 1) {
                     const shuffleOption = document.createElement('option');
                     shuffleOption.value = SHUFFLE_ALL_KEY;
-                    // Using text-indigo-600 for a bit of style in the dropdown
                     shuffleOption.innerHTML = '🔀 Shuffle all - ανακατέψτε όλα 🔀';
                     shuffleOption.className = "font-bold text-indigo-600";
                     subthemeSelect.appendChild(shuffleOption);
@@ -237,6 +674,7 @@
 
         /**
          * Loads the flashcard deck based on selected theme and sub-theme.
+         * This function now also handles the dynamic generation of number cards.
          */
         function loadDeck() {
             const themeKey = themeSelect.value;
@@ -244,20 +682,65 @@
             currentFlashcards = [];
 
             if (themeKey && subthemeKey && allFlashcards[themeKey]) {
+                const subthemeData = allFlashcards[themeKey][subthemeKey];
+
                 if (subthemeKey === SHUFFLE_ALL_KEY) {
-                    // Combine all cards from all sub-themes
+                    // 1. Combine all cards from all sub-themes
                     const allSubthemes = allFlashcards[themeKey];
                     for (const key in allSubthemes) {
-                        currentFlashcards.push(...allSubthemes[key]);
+                        const data = allSubthemes[key];
+                        if (Array.isArray(data)) {
+                            currentFlashcards.push(...data);
+                        } 
+                        // --- UPDATED: Handle all generators ---
+                        else if (data === "GENERATE_RANDOM_101_1000") {
+                            currentFlashcards.push(...generateRandomNumberCards(101, 1000, 20)); 
+                        } else if (data === "GENERATE_RANDOM_11_100") {
+                            currentFlashcards.push(...generateRandomNumberCards(11, 100, 20)); 
+                        }
+                        // --- NEW: Add random Nationality cards to shuffle all ---
+                        else if (data === "GET_NATIONALITY_COUNTRY") {
+                            currentFlashcards.push(...getRandomCards(NATIONALITY_DATA['Country - Χώρα'], 20));
+                        } else if (data === "GET_NATIONALITY_MALE") {
+                            currentFlashcards.push(...getRandomCards(NATIONALITY_DATA['Nationality (Male) - Εθνικότητα (αρσενικό)'], 20));
+                        } else if (data === "GET_NATIONALITY_FEMALE") {
+                            currentFlashcards.push(...getRandomCards(NATIONALITY_DATA['Nationality (Female) - Εθνικότητα (θηλυκό)'], 20));
+                        } else if (data === "GET_NATIONALITY_LANGUAGE") {
+                            currentFlashcards.push(...getRandomCards(NATIONALITY_DATA['Language - Γλώσσα'], 20));
+                        }
                     }
-                } else if (allFlashcards[themeKey][subthemeKey]) {
-                    // Get cards from the specific sub-theme
-                    currentFlashcards = [...allFlashcards[themeKey][subthemeKey]];
+                } else if (Array.isArray(subthemeData)) {
+                    // 2. Standard case: Get cards from the specific sub-theme array
+                    currentFlashcards = [...subthemeData];
+                } 
+                // --- UPDATED: Handle all generators ---
+                else if (subthemeData === "GENERATE_RANDOM_101_1000") {
+                    currentFlashcards = generateRandomNumberCards(101, 1000, 20);
+                } else if (subthemeData === "GENERATE_RANDOM_11_100") {
+                    currentFlashcards = generateRandomNumberCards(11, 100, 20);
+                }
+                // --- NEW: Handle Nationality sub-themes ---
+                else if (subthemeData === "GET_NATIONALITY_COUNTRY") {
+                    currentFlashcards = getRandomCards(NATIONALITY_DATA['Country - Χώρα'], 20);
+                } else if (subthemeData === "GET_NATIONALITY_MALE") {
+                    currentFlashcards = getRandomCards(NATIONALITY_DATA['Nationality (Male) - Εθνικότητα (αρσενικό)'], 20);
+                } else if (subthemeData === "GET_NATIONALITY_FEMALE") {
+                    currentFlashcards = getRandomCards(NATIONALITY_DATA['Nationality (Female) - Εθνικότητα (θηλυκό)'], 20);
+                } else if (subthemeData === "GET_NATIONALITY_LANGUAGE") {
+                    currentFlashcards = getRandomCards(NATIONALITY_DATA['Language - Γλώσσα'], 20);
                 }
                 
+                // --- CONSOLIDATED SHUFFLE/SLICE LOGIC ---
                 if (currentFlashcards.length > 0) {
+                    // Always shuffle the resulting deck
                     shuffleArray(currentFlashcards);
+
+                    // If it's the "Shuffle All" option and the deck is large, pick 20
+                    if (subthemeKey === SHUFFLE_ALL_KEY && currentFlashcards.length > 20) {
+                        currentFlashcards = currentFlashcards.slice(0, 20);
+                    }
                 }
+                // --- END OF NEW LOGIC ---
             }
             
             currentIndex = 0;
@@ -268,29 +751,35 @@
             }
             updateCard();
             updateNavButtons();
+
+            // Remove focus from the dropdown so spacebar works for flipping
+            subthemeSelect.blur();
         }
 
         /**
          * Updates the content displayed on the flashcard.
          */
         function updateCard() {
+            const wasFlipped = isFlipped; // Capture the state before any changes
+
             // Unflip the card if it's flipped (e.g., when moving next/prev)
-            if (isFlipped) {
+            if (wasFlipped) {
                 flashcard.classList.remove('is-flipped');
                 isFlipped = false;
             }
 
             // Wait for flip animation to finish before updating text
+            // Set timeout to 0 if not flipped, so it updates instantly
             setTimeout(() => {
                 if (currentFlashcards.length === 0) {
                     // Show instructions
-                    cardFrontLabel.style.display = 'none'; // Hide "Greek Word" label
+                    cardFrontLabel.style.display = 'none'; // Hide "Greek" label
                     cardFrontText.textContent = "Choose a Theme and Sub-Theme to practice.";
-                    cardFrontText.className = "text-xl font-bold text-indigo-700 text-center"; // Changed text color to indigo
+                    cardFrontText.className = "text-xl font-bold text-indigo-600 text-center"; 
 
-                    cardBackLabel.style.display = 'none'; // Hide "English Meaning" label
+                    cardBackLabel.style.display = 'none'; // Hide "English" label
                     cardBackText.textContent = "Choose a Theme and Sub-Theme to practice.";
-                    cardBackText.className = "text-xl font-bold text-indigo-100 text-center"; // Changed text color to indigo
+                    cardBackText.className = "text-xl font-bold text-indigo-200 text-center"; // Lighter indigo for dark bg
 
                     progressIndicator.textContent = "Waiting for selection...";
                     return; // Stop here
@@ -299,14 +788,38 @@
                 // Restore normal labels and styles if we have cards
                 cardFrontLabel.style.display = 'block';
                 cardBackLabel.style.display = 'block';
-                cardFrontText.className = "text-3xl md:text-4xl font-bold text-indigo-700 text-center px-4"; // Changed Greek word color to indigo
-                cardBackText.className = "text-3xl md:text-4xl font-bold text-white text-center px-4";
-
+                
                 const card = currentFlashcards[currentIndex];
-                cardFrontText.textContent = card.greek;
-                cardBackText.textContent = card.english;
+
+                // Logic for toggle direction
+                if (isGreekToEnglish) {
+                    // Front: Greek
+                    cardFrontLabel.textContent = "Greek";
+                    cardFrontLabel.className = "self-start text-sm font-medium text-gray-500";
+                    cardFrontText.textContent = card.greek;
+                    cardFrontText.className = "text-3xl md:text-4xl font-bold text-indigo-600 text-center px-4";
+
+                    // Back: English
+                    cardBackLabel.textContent = "English";
+                    cardBackLabel.className = "self-start text-sm font-medium text-indigo-100";
+                    cardBackText.textContent = card.english;
+                    cardBackText.className = "text-3xl md:text-4xl font-bold text-white text-center px-4";
+                } else {
+                    // Front: English
+                    cardFrontLabel.textContent = "English";
+                    cardFrontLabel.className = "self-start text-sm font-medium text-gray-500";
+                    cardFrontText.textContent = card.english;
+                    cardFrontText.className = "text-3xl md:text-4xl font-bold text-indigo-600 text-center px-4";
+
+                    // Back: Greek
+                    cardBackLabel.textContent = "Greek";
+                    cardBackLabel.className = "self-start text-sm font-medium text-indigo-100";
+                    cardBackText.textContent = card.greek;
+                    cardBackText.className = "text-3xl md:text-4xl font-bold text-white text-center px-4";
+                }
+
                 progressIndicator.textContent = `${currentIndex + 1} / ${currentFlashcards.length}`;
-            }, isFlipped ? 300 : 0); // 300ms is half the transition time, ensures text updates after flip starts
+            }, wasFlipped ? 300 : 0); // Use the captured state to determine delay
         }
 
         /**
@@ -357,9 +870,21 @@
              // Reset dropdowns
             themeSelect.selectedIndex = 0;
             loadSubthemes(); // This will reset subthemes and call loadDeck()
+        }
+
+        /**
+         * Toggles the card direction and updates the card.
+         */
+        function toggleDirection() {
+            isGreekToEnglish = !isGreekToEnglish;
+            directionToggle.classList.toggle('toggled');
             
-            // loadDeck() inside loadSubthemes() already handles
-            // resetting the card state and buttons.
+            // Unflip the card and update its content to match new direction
+            if (isFlipped) {
+                flashcard.classList.remove('is-flipped');
+                isFlipped = false;
+            }
+            updateCard();
         }
 
         // --- EVENT LISTENERS ---
@@ -372,28 +897,51 @@
         themeSelect.addEventListener('change', loadSubthemes);
         subthemeSelect.addEventListener('change', loadDeck);
         flipBtn.addEventListener('click', flipCard);
+        directionToggle.addEventListener('click', toggleDirection);
         
         // Add click listeners to the card itself to flip
-        // This is more intuitive than just the flip button
-        flashcard.addEventListener('click', flipCard); 
+        flashcard.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                flipCard();
+            }
+        }); 
         
         prevBtn.addEventListener('click', prevCard);
         nextBtn.addEventListener('click', nextCard);
         resetBtn.addEventListener('click', resetApp);
 
+        // --- Modal Listeners ---
+        helpBtn.addEventListener('click', () => {
+            helpModal.classList.remove('hidden');
+        });
+
+        closeModalBtn.addEventListener('click', () => { // --- FIX WAS HERE ---
+            helpModal.classList.add('hidden');
+        });
+
+        // Close modal if clicking on the background overlay
+        helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) {
+                helpModal.classList.add('hidden');
+            }
+        });
+
         // Add keyboard navigation
         document.addEventListener('keydown', (e) => {
+            // Don't interfere if user is typing in a select box
+            if (document.activeElement === themeSelect || document.activeElement === subthemeSelect) {
+                return;
+            }
+            
             if (currentFlashcards.length === 0) return; // Don't do anything if no cards
 
             switch (e.key) {
                 case 'ArrowLeft':
-                    // Trigger click on prev button if it's not disabled
                     if (!prevBtn.disabled) {
                         prevBtn.click();
                     }
                     break;
                 case 'ArrowRight':
-                     // Trigger click on next button if it's not disabled
                     if (!nextBtn.disabled) {
                         nextBtn.click();
                     }
@@ -402,7 +950,6 @@
                 case 'ArrowUp':
                 case 'ArrowDown':
                     e.preventDefault(); // Stop space from scrolling
-                     // Trigger click on flip button if it's not disabled
                     if (!flipBtn.disabled) {
                         flipBtn.click();
                     }
@@ -413,6 +960,5 @@
     </script>
 </body>
 </html>
-
 
 
